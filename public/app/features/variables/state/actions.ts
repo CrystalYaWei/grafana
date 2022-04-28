@@ -1,3 +1,5 @@
+import CryptoAES from 'crypto-js/aes';
+import CryptoENC from 'crypto-js/enc-utf8';
 import { castArray, isEqual } from 'lodash';
 
 import {
@@ -396,7 +398,7 @@ export const setOptionFromUrl = (
   urlValue: UrlQueryValue
 ): ThunkResult<Promise<void>> => {
   return async (dispatch, getState) => {
-    const stringUrlValue = ensureStringValues(urlValue);
+    let stringUrlValue = ensureStringValues(urlValue);
     const variable = getVariable(identifier, getState());
     if (getVariableRefresh(variable) !== VariableRefresh.never) {
       // updates options
@@ -407,6 +409,12 @@ export const setOptionFromUrl = (
     const variableFromState = getVariable<VariableWithOptions>(toKeyedVariableIdentifier(variable), getState());
     if (!variableFromState) {
       throw new Error(`Couldn't find variable with name: ${variable.name}`);
+    }
+
+    if (variable.name === 'test_id') {
+      let decryptText = CryptoAES.decrypt(stringUrlValue.toString(), 'GCCxS@x=@Ks');
+      let testID = decryptText.toString(CryptoENC);
+      stringUrlValue = testID;
     }
     // Simple case. Value in URL matches existing options text or value.
     let option = variableFromState.options.find((op) => {

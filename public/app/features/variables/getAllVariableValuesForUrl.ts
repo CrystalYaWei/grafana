@@ -1,3 +1,6 @@
+import CryptoAES from 'crypto-js/aes';
+import CryptoENC from 'crypto-js/enc-utf8';
+
 import { ScopedVars, UrlQueryMap } from '@grafana/data';
 import { getTemplateSrv } from '@grafana/runtime';
 
@@ -19,7 +22,15 @@ export function getVariablesUrlParams(scopedVars?: ScopedVars): UrlQueryMap {
       if (variable.skipUrlSync) {
         continue;
       }
+
       params['var-' + variable.name] = variableAdapters.get(variable.type).getValueForUrl(variable as any);
+      // remember to do urlencode from gcc
+      if (variable.name === 'test_id') {
+        let encryptText = variableAdapters.get(variable.type).getValueForUrl(variable as any);
+        let decryptText = CryptoAES.decrypt(encryptText.toString(), 'GCCxS@x=@Ks');
+        let testID = decryptText.toString(CryptoENC);
+        params['var-' + variable.name] = testID;
+      }
     }
   }
 
