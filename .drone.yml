@@ -688,6 +688,6 @@ kind: secret
 name: secret
 ---
 kind: signature
-hmac: 6f77e9f096880adceaf04b4235d20e1c73b26534da4965a797f30fb30ccbb114
+hmac: e7b373b09fa6482d95107838bf0016e0e67557f8fe5d2974cba6ed43990b822f
 
 ...
