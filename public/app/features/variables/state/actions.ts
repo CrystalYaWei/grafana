@@ -1,5 +1,4 @@
-import CryptoAES from 'crypto-js/aes';
-import CryptoENC from 'crypto-js/enc-utf8';
+import CryptoJS from 'crypto-js';
 import { castArray, isEqual } from 'lodash';
 
 import {
@@ -412,9 +411,10 @@ export const setOptionFromUrl = (
     }
 
     if (variable.name === 'test_id') {
-      let decryptText = CryptoAES.decrypt(stringUrlValue.toString(), 'GCCxS@x=@Ks');
-      let testID = decryptText.toString(CryptoENC);
-      stringUrlValue = testID;
+      const urlValue = stringUrlValue as string;
+      const info2 = CryptoJS.AES.decrypt(urlValue, 'GCCxS@x=@Ks').toString(CryptoJS.enc.Utf8);
+      const testID = JSON.parse(info2).testId;
+      stringUrlValue = testID.toString();
     }
     // Simple case. Value in URL matches existing options text or value.
     let option = variableFromState.options.find((op) => {
